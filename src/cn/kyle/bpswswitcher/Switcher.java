@@ -146,8 +146,13 @@ public class Switcher extends Activity {
 					onClickAction.onClick(dialog, which);
 					refreshTip();
 					AlertDialog aa = new AlertDialog.Builder(Switcher.this)
-		    		.setTitle("提示").setMessage("切换成功")
-		    		.setPositiveButton("确定", new DialogInterface.OnClickListener(){
+		    		.setTitle("提示").setMessage("切换成功，重启后生效，是否立即重启？")
+		    		.setPositiveButton("是", new DialogInterface.OnClickListener(){
+		    			public void onClick(DialogInterface dialog, int which) {
+		    				G.execRootCmdSilent("reboot");
+		    			}
+		    		})
+		    		.setNeutralButton("否", new DialogInterface.OnClickListener(){
 		    			public void onClick(DialogInterface dialog, int which) {
 		    			}
 		    		}).create();
@@ -163,19 +168,54 @@ public class Switcher extends Activity {
     	}
     }
     
+    public static String resolvingVersion(String verstr){
+    	if (verstr.contains("MILESTONE2")){
+    		return "(里程碑2专用) "+verstr.substring(verstr.indexOf("MILESTONE2")+"MILESTONE2".length());
+    	}
+//		File_GSMAGA:			US1MILESTONE2PERARB125LA016.0R
+//		File_GSMAO:				UCA JRDNEMARA B1B80AA035.0R
+//		File_GSMAT:				USA JRDNEMARA B1B5TEL02A.0R
+//		File_GSMBC:				USA JORD B15CLABRLA011.0R
+//		File_GSMC:				USA JRDNPRC B1B50AA02F.0R
+//		File_GSMCEE:			UCA JRDNEMARA B1B80AA02B.0R
+//		File_GSMCEE3.4.2:		UCA JRDNEMARA B1B80AA03A.0R
+//		File_GSMEU:				UCA JRDNEMARA B1B80AA039.0R
+//		File_GSMF:				UCA JRDNEMARA B1B80AA028.0R
+//		File_GSMHTC:			UCA JRDNEMARA B1B80AA030.0R
+//		File_GSMINT:			UCA JRDNEMARA B1B50AA028.0R
+//		File_GSMPO:				USA JRDNEMARA B1B8ORAPL035.0R
+//		File_GSMUK2.51.1:		USA JRDNEMARA B1B8RTGB02C.0R
+//		File_GSMUK3.4.2-117:	USA JRDNEMARA B1B8RTGB035.0R
+//		File_GSMUK3.4.3-3:		USA JRDNEMARA B1B8RTGB039.0R
+//		File_GSMUKT_2.21.1:		USA JRDNEMARA B1B8TMGB028.0R
+//		File_GSMUKT_2.51.1:		USA JRDNEMARA B1B8TMGB030.0R
+//		File_GSMUST3.4.2-107:	USA JRDNTMO B1B4B5DE1035.0R
+//		File_GSMUST3.4.2-107-9:	USA JRDNTMO B1B4B5DE1039.0R
+//		File_GSMUST6.19.0:		USA JRDNTMO B1B4B5DE1028.0R
+    	if (verstr.contains("JRDNEMARA")){
+    		return "(defy专用) JRDNEMARA "+verstr.substring(verstr.indexOf("JRDNEMARA")+"JRDNEMARA".length());
+    	}
+    	if (verstr.contains("JORD")){
+    		return "(defy专用) JORD "+verstr.substring(verstr.indexOf("JORD")+"JORD".length());
+    	}
+    	if (verstr.contains("JRDNPRC")){
+    		return "(defy专用) 国行  "+verstr.substring(verstr.indexOf("JRDNPRC")+"JRDNPRC".length());
+    	}
+    	if (verstr.contains("JRDNTMO")){
+    		return "(defy专用) JRDNTMO "+verstr.substring(verstr.indexOf("JRDNTMO")+"JRDNTMO".length());
+    	}
+    	
+    	if (verstr.contains("JRDN")){
+    		return "(defy专用) JRDN "+verstr.substring(verstr.indexOf("JRDN")+"JRDN".length());
+    	}
+    	return verstr;
+    }
+    
     public void refreshTip(){
     	String current = Module.loadBpswVersionStr(true);
-    	if (current.contains("MILESTONE2")){
-    		current = "(里程碑2专用) "+current.substring(current.indexOf("MILESTONE2")+"MILESTONE2".length());
-    	}else if (current.contains("JRDNEM")){
-    		current = "(defy专用) "+current.substring(current.indexOf("JRDNEM")+"JRDNEM".length());
-    	}
+    	current = resolvingVersion(current);
     	String backup = Module.hasBackup()?Module.loadBpswVersionStr(false):"-";
-    	if (backup.contains("MILESTONE2")){
-    		backup = "(里程碑2专用) "+backup.substring(backup.indexOf("MILESTONE2")+"MILESTONE2".length());
-    	}else if (backup.contains("JRDNEM")){
-    		backup = "(defy专用) "+backup.substring(backup.indexOf("JRDNEM")+"JRDNEM".length());
-    	}
+    	backup = resolvingVersion(backup);
     	tvTip.setText(
     			"当前系统的基带为："+Module.checkCurrentBpsw().getName()+"\n"+
     			"版本号："+current+"\n\n"+
