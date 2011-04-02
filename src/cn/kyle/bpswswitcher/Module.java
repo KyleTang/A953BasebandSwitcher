@@ -85,6 +85,7 @@ public class Module {
 	
 	public static boolean backup(){
 		new File(BAK_PATH).mkdirs();
+		G.execRootCmdSilent("/system/bin/mkdir "+BAK_PATH);
 		G.execRootCmdSilent("/system/bin/rm "+BAK_PATH+"/*");
 		G.execRootCmdSilent("/system/bin/cp "+BPSW_PATH+"/* "+BAK_PATH+"/");
 		return isBackupOK();

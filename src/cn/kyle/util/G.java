@@ -132,7 +132,7 @@ public final class G {
 			InputStream input = process.getInputStream();
 			DataInputStream dataInput= new DataInputStream(input);
 			
-			dataOut.writeBytes(cmd + "\n");
+			dataOut.writeBytes(cmd + " 2>&1 \n");
 			dataOut.flush();
 			L.debug("G.execRootCmd: exec cmd flush - pass");
 			
