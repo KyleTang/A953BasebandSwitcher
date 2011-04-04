@@ -57,6 +57,7 @@ public class Switcher extends Activity {
 					}).create();
 					a.show();
 				}
+				refreshTip();
 			}
         });
         
@@ -66,6 +67,7 @@ public class Switcher extends Activity {
 				doSwitch("还原为", Module.checkBackupBpsw() , new DialogInterface.OnClickListener(){
 					public void onClick(DialogInterface dialog, int which) {
 						Module.restore();
+						refreshTip();
 					}
 				});
 			}
@@ -114,13 +116,24 @@ public class Switcher extends Activity {
 				});
 			}
         });
-        
+
         Button btnME722ZHCN_new = (Button)findViewById(R.id.btnME722ZHCN_new);
         btnME722ZHCN_new.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
 				doSwitch("切换为", Module.BPSW.me722_zhcn_new , new DialogInterface.OnClickListener(){
 					public void onClick(DialogInterface dialog, int which) {
 						Module.toME722ZHCN_New();
+					}
+				});
+			}
+        });
+        
+        Button btnME722ZHCN_new2 = (Button)findViewById(R.id.btnME722ZHCN_new2);
+        btnME722ZHCN_new2.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {
+				doSwitch("切换为", Module.BPSW.me722_zhcn_new2 , new DialogInterface.OnClickListener(){
+					public void onClick(DialogInterface dialog, int which) {
+						Module.toME722ZHCN_New2();
 					}
 				});
 			}

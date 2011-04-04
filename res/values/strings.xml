@@ -5,8 +5,9 @@
     <string name="btnBackUp">备份当前基带</string>
     <string name="btnRestore">从备份还原</string>
     <string name="btnA953UK">切换成A953欧版基带\n(英国/法国/德国/奥地利 /瑞士/澳大利亚Optus)\nWCDMA 900/2100</string>
-    <string name="btnME722ZHCN">切换成ME722国行基带\nWCDMA 900/2100</string>
-    <string name="btnME722ZHCN_new">切换成ME722国行基带(新版)\nWCDMA 900/2100</string>
+    <string name="btnME722ZHCN">切换成ME722国行基带(0.24)\nWCDMA 850/1900/2100</string>
+    <string name="btnME722ZHCN_new">切换成ME722国行基带(1.10)\nWCDMA 850/1900/2100</string>
+    <string name="btnME722ZHCN_new2">切换成ME722国行基带(2.5)\nWCDMA 850/1900/2100</string>
     <string name="btnA953AuVodafone">切换成A953澳大利亚Vodafone基带\nWCDMA 900/2100</string>
     <string name="btnA953Brazil">切换成A953巴西基带\nWCDMA 850/1900/2100</string>
 </resources>

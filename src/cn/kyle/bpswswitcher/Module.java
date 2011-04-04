@@ -26,8 +26,9 @@ public class Module {
 	
 	public static enum BPSW{
 		a953_uk("A953欧版基带"),
-		me722_zhcn("ME722国行基带"),
-		me722_zhcn_new("ME722国行基带(新版)"),
+		me722_zhcn("ME722国行基带(0.24)"),
+		me722_zhcn_new("ME722国行基带(1.10)"),
+		me722_zhcn_new2("ME722国行基带(2.5)"),
 		a953_au_vodafone("A953澳大利亚Vodafone基带"),
 		a953_brazil("A953巴西基带"),
 		other("未知基带");
@@ -61,6 +62,10 @@ public class Module {
 	
 	public static void toME722ZHCN_New(){
 		switchFrom(BPSW.me722_zhcn_new.toString());
+	}
+	
+	public static void toME722ZHCN_New2(){
+		switchFrom(BPSW.me722_zhcn_new2.toString());
 	}
 	
 	public static boolean hasBackup(){
@@ -132,6 +137,8 @@ public class Module {
 			return BPSW.me722_zhcn;
 		}else if (areSameBpsw(bpswPath,BPSW.me722_zhcn_new.toString())==BpswCompareResult.Same){
 			return BPSW.me722_zhcn_new;
+		}else if (areSameBpsw(bpswPath,BPSW.me722_zhcn_new2.toString())==BpswCompareResult.Same){
+			return BPSW.me722_zhcn_new2;
 		}else if (areSameBpsw(bpswPath,BPSW.a953_au_vodafone.toString())==BpswCompareResult.Same){
 			return BPSW.a953_au_vodafone;
 		}else if (areSameBpsw(bpswPath,BPSW.a953_brazil.toString())==BpswCompareResult.Same){
@@ -266,6 +273,8 @@ public class Module {
 			if (!new File(G.getExternalStorageDirectory(),BPSW.me722_zhcn.toString()).exists())
 				return false;
 			if (!new File(G.getExternalStorageDirectory(),BPSW.me722_zhcn_new.toString()).exists())
+				return false;
+			if (!new File(G.getExternalStorageDirectory(),BPSW.me722_zhcn_new2.toString()).exists())
 				return false;
 			if (!new File(G.getExternalStorageDirectory(),BPSW.a953_au_vodafone.toString()).exists())
 				return false;
