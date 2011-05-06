@@ -1,64 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" 
 	android:layout_width="fill_parent"
-	android:layout_height="wrap_content" >
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-	<TextView  
-	android:id="@+id/tvTip"
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    />
-	<Button  
-	android:id="@+id/btnBackUp"
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/btnBackUp"
-    />
-    <Button  
-	android:id="@+id/btnRestore"
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/btnRestore"
-    />
-    <Button 
-    android:id="@+id/btnA953UK" 
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/btnA953UK"
-    />
-    <Button  
-    android:id="@+id/btnME722ZHCN" 
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/btnME722ZHCN"
-    />
-    <Button  
-    android:id="@+id/btnME722ZHCN_new" 
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/btnME722ZHCN_new"
-    />
-    <Button  
-    android:id="@+id/btnME722ZHCN_new2" 
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/btnME722ZHCN_new2"
-    />
-    <Button  
-    android:id="@+id/btnA953AuVodafone" 
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/btnA953AuVodafone"
-    />
-    <Button  
-    android:id="@+id/btnA953Brazil" 
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/btnA953Brazil"
-    />
-</LinearLayout>
+	android:layout_height="wrap_content">
+	<LinearLayout 
+		android:id="@+id/llBasebands" 
+		android:orientation="vertical" android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+
+	</LinearLayout>
 </ScrollView>

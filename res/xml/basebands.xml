@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<basebands>
+<baseband id="uk" name="英国" text="英国基带" wcdma="900/2100" />
+</basebands>

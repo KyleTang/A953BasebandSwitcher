@@ -1,10 +1,11 @@
 package cn.kyle.bpswswitcher;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
-import cn.kyle.bpswswitcher.Module.BPSW;
 import cn.kyle.bpswswitcher.Module.BpswCompareResult;
 import cn.kyle.util.G;
+import cn.kyle.util.L;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -17,6 +18,7 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ public class Switcher extends Activity {
     /** Called when the activity is first created. */
 	private TextView tvTip = null;
 	private Toast myToast = null;
+	private LinearLayout llBasebands = null; 
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,11 +34,10 @@ public class Switcher extends Activity {
         setContentView(R.layout.main);
         
         G.setResourcesAndContext(this);
-        
-        tvTip = (TextView)findViewById(R.id.tvTip);
+        tvTip = new TextView(this); 
         this.setTitle(this.getTitle()+" "+G.versionName);
         
-        Button btnBackUp = (Button)findViewById(R.id.btnBackUp);
+        Button btnBackUp = new Button(this);
         btnBackUp.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
 				if (Module.backup()){
@@ -60,11 +62,12 @@ public class Switcher extends Activity {
 				refreshTip();
 			}
         });
+        llBasebands.addView(btnBackUp);
         
-        Button btnRestore = (Button)findViewById(R.id.btnRestore);
+        Button btnRestore = new Button(this);
         btnRestore.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
-				doSwitch("还原为", Module.checkBackupBpsw() , new DialogInterface.OnClickListener(){
+				doSwitch("还原为", Module.checkBackupBaseband(), new DialogInterface.OnClickListener(){
 					public void onClick(DialogInterface dialog, int which) {
 						Module.restore();
 						refreshTip();
@@ -72,77 +75,64 @@ public class Switcher extends Activity {
 				});
 			}
         });
+        llBasebands.addView(btnRestore);
         
-        Button btnA953UK = (Button)findViewById(R.id.btnA953UK);
-        btnA953UK.setOnClickListener(new OnClickListener(){
-			public void onClick(View v) {
-				doSwitch("切换为", Module.BPSW.a953_uk , new DialogInterface.OnClickListener(){
-					public void onClick(DialogInterface dialog, int which) {
-						Module.toA953UK();
-					}
-				});
-			}
-        });
+        addButtons();
         
-        Button btnA953AuVodafone = (Button)findViewById(R.id.btnA953AuVodafone);
-        btnA953AuVodafone.setOnClickListener(new OnClickListener(){
-			public void onClick(View v) {
-				doSwitch("切换为", Module.BPSW.a953_au_vodafone , new DialogInterface.OnClickListener(){
-					public void onClick(DialogInterface dialog, int which) {
-						Module.toA953_Au_Vodafone();
-					}
-				});
-			}
-        });
-        
-        Button btnA953Brazil = (Button)findViewById(R.id.btnA953Brazil);
-        btnA953Brazil.setOnClickListener(new OnClickListener(){
-			public void onClick(View v) {
-				doSwitch("切换为", Module.BPSW.a953_brazil , new DialogInterface.OnClickListener(){
-					public void onClick(DialogInterface dialog, int which) {
-						Module.toA953_Brazil();
-					}
-				});
-			}
-        });
-        
-        Button btnME722ZHCN = (Button)findViewById(R.id.btnME722ZHCN);
-        btnME722ZHCN.setOnClickListener(new OnClickListener(){
-			public void onClick(View v) {
-				doSwitch("切换为", Module.BPSW.me722_zhcn , new DialogInterface.OnClickListener(){
-					public void onClick(DialogInterface dialog, int which) {
-						Module.toME722ZHCN();
-					}
-				});
-			}
-        });
-
-        Button btnME722ZHCN_new = (Button)findViewById(R.id.btnME722ZHCN_new);
-        btnME722ZHCN_new.setOnClickListener(new OnClickListener(){
-			public void onClick(View v) {
-				doSwitch("切换为", Module.BPSW.me722_zhcn_new , new DialogInterface.OnClickListener(){
-					public void onClick(DialogInterface dialog, int which) {
-						Module.toME722ZHCN_New();
-					}
-				});
-			}
-        });
-        
-        Button btnME722ZHCN_new2 = (Button)findViewById(R.id.btnME722ZHCN_new2);
-        btnME722ZHCN_new2.setOnClickListener(new OnClickListener(){
-			public void onClick(View v) {
-				doSwitch("切换为", Module.BPSW.me722_zhcn_new2 , new DialogInterface.OnClickListener(){
-					public void onClick(DialogInterface dialog, int which) {
-						Module.toME722ZHCN_New2();
-					}
-				});
-			}
-        });
-        
+//        Button btnME722ZHCN_new2 = (Button)findViewById(R.id.btnME722ZHCN_new2);
+//        btnME722ZHCN_new2.setOnClickListener(new OnClickListener(){
+//			public void onClick(View v) {
+//				doSwitch("切换为", Module.BPSW.me722_zhcn_new2 , new DialogInterface.OnClickListener(){
+//					public void onClick(DialogInterface dialog, int which) {
+//						Module.toME722ZHCN_New2();
+//					}
+//				});
+//			}
+//        });
+//        
         refreshTip();
     }
-
-    public void doSwitch(String action, Module.BPSW  toBpsw, final DialogInterface.OnClickListener onClickAction ){
+    
+    private void addButtons() {
+		Button btn = null;
+		
+		for (Iterator<Baseband> itr = Module.basebands.iterator(); itr
+				.hasNext();) {
+			Baseband bb = itr.next();
+			L.debug("baseband:" + bb.toString());
+			btn = new Button(this);
+			btn.setTag(bb);
+			btn.setText(bb.text);
+			btn.setOnClickListener((OnClickListener) new OnButtonClickListener(btn));
+			llBasebands.addView(btn);
+		}
+	}
+    
+    private class OnButtonClickListener implements android.view.View.OnClickListener{
+    	private Button btn;
+    	public OnButtonClickListener(Button btn){
+    		this.btn = btn;
+    	}
+		public void onClick(View v) {
+			//TODO switch baseband
+			final Baseband bb = (Baseband)btn.getTag();
+			doSwitch("切换为", bb , new DialogInterface.OnClickListener(){
+				public void onClick(DialogInterface dialog, int which) {
+					Module.switchTo(bb.id);
+				}
+			});
+			
+		}
+    	
+    }
+    
+    
+    /**
+     * @param action
+     * @param toBpsw
+     * @param onClickAction
+     */
+    public void doSwitch(String action, Baseband t, final DialogInterface.OnClickListener onClickAction ){
     	if (!G.haveRoot()){
     		AlertDialog a = new AlertDialog.Builder(Switcher.this)
     		.setTitle("警告").setMessage("手机需要先破解ROOT权限！")
@@ -153,7 +143,7 @@ public class Switcher extends Activity {
     		a.show();
     	}else{
 	    	AlertDialog a = new AlertDialog.Builder(Switcher.this)
-			.setTitle("提示").setMessage("是否要"+action+toBpsw.getName())
+			.setTitle("提示").setMessage("是否要"+action+(t==null?"备份基带":t.name))
 			.setPositiveButton("确定", new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int which) {
 					onClickAction.onClick(dialog, which);
@@ -181,58 +171,19 @@ public class Switcher extends Activity {
     	}
     }
     
-    public static String resolvingVersion(String verstr){
-    	if (verstr.contains("MILESTONE2")){
-    		return "(里程碑2专用) "+verstr.substring(verstr.indexOf("MILESTONE2")+"MILESTONE2".length());
-    	}
-//		File_GSMAGA:			US1 MILESTONE2 PERAR B125 LA 016.0R
-//		File_GSMAO:				UCA JRDNEMARA B1B8 0AA 035.0R
-//		File_GSMAT:				USA JRDNEMARA B1B5 TEL 02A.0R
-//		File_GSMBC:				USA JORD B15 CLABR LA 011.0R
-//		File_GSMC:				USA JRDN PRC  B1B5 0AA 02F.0R
-//		File_GSMCEE:			UCA JRDNEMARA B1B8 0AA 02B.0R
-//		File_GSMCEE3.4.2:		UCA JRDNEMARA B1B8 0AA 03A.0R
-//		File_GSMEU:				UCA JRDNEMARA B1B8 0AA 039.0R
-//		File_GSMF:				UCA JRDNEMARA B1B8 0AA 028.0R
-//		File_GSMHTC:			UCA JRDNEMARA B1B8 0AA 030.0R
-//		File_GSMINT:			UCA JRDNEMARA B1B5 0AA 028.0R
-//		File_GSMPO:				USA JRDNEMARA B1B8 ORA PL 035.0R
-//		File_GSMUK2.51.1:		USA JRDNEMARA B1B8 RT GB 02C.0R
-//		File_GSMUK3.4.2-117:	USA JRDNEMARA B1B8 RT GB 035.0R
-//		File_GSMUK3.4.3-3:		USA JRDNEMARA B1B8 RT GB 039.0R
-//		File_GSMUKT_2.21.1:		USA JRDNEMARA B1B8 TM GB 028.0R
-//		File_GSMUKT_2.51.1:		USA JRDNEMARA B1B8 TM GB 030.0R
-//		File_GSMUST3.4.2-107:	USA JRDNTMO B1B4B5 DE1  035.0R
-//		File_GSMUST3.4.2-107-9:	USA JRDNTMO B1B4B5 DE1  039.0R
-//		File_GSMUST6.19.0:		USA JRDNTMO B1B4B5 DE1  028.0R
-    	if (verstr.contains("JRDNEMARA")){
-    		return "(defy专用) JRDNEMARA "+verstr.substring(verstr.indexOf("JRDNEMARA")+"JRDNEMARA".length());
-    	}
-    	if (verstr.contains("JORD")){
-    		return "(defy专用) JORD "+verstr.substring(verstr.indexOf("JORD")+"JORD".length());
-    	}
-    	if (verstr.contains("JRDNPRC")){
-    		return "(defy专用) 国行  "+verstr.substring(verstr.indexOf("JRDNPRC")+"JRDNPRC".length());
-    	}
-    	if (verstr.contains("JRDNTMO")){
-    		return "(defy专用) JRDNTMO "+verstr.substring(verstr.indexOf("JRDNTMO")+"JRDNTMO".length());
-    	}
-    	
-    	if (verstr.contains("JRDN")){
-    		return "(defy专用) JRDN "+verstr.substring(verstr.indexOf("JRDN")+"JRDN".length());
-    	}
-    	return verstr;
-    }
+
     
     public void refreshTip(){
     	String current = Module.loadBpswVersionStr(true);
-    	current = resolvingVersion(current);
+    	current = Module.resolvingVersion(current);
     	String backup = Module.hasBackup()?Module.loadBpswVersionStr(false):"-";
-    	backup = resolvingVersion(backup);
+    	backup = Module.resolvingVersion(backup);
+    	Baseband bc = Module.checkCurrentBaseband();
+    	Baseband bb = Module.checkBackupBaseband();
     	tvTip.setText(
-    			"当前系统的基带为："+Module.checkCurrentBpsw().getName()+"\n"+
+    			"当前系统的基带为："+(bc==null?"(未知基带)":bc.name)+"\n"+
     			"版本号："+current+"\n\n"+
-    			"当前备份的基带为："+(Module.hasBackup()?Module.checkBackupBpsw().getName():"(尚未备份)")+"\n"+
+    			"当前备份的基带为："+(Module.hasBackup()? (bc==null?"(未知基带)":bc.name):"(尚未备份)")+"\n"+
     			"版本号："+backup);
     }
     
@@ -264,8 +215,7 @@ public class Switcher extends Activity {
 		
 		miMoreApp.setOnMenuItemClickListener(new OnMenuItemClickListener(){
 			public boolean onMenuItemClick(MenuItem item) {
-				Intent i = new Intent(Switcher.this,KyleAppView.class);
-				startActivity(i);
+				//TODO
 				return false;
 			}
 		});
@@ -279,4 +229,5 @@ public class Switcher extends Activity {
 			myToast = new Toast(Switcher.this);
 		myToast.makeText(Switcher.this, tipInfo, Toast.LENGTH_SHORT).show();
 	}
+	
 }
