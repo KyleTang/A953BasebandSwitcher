@@ -23,13 +23,6 @@ public class Baseband {
 	public String path;
 	private String mac;
 	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		
-	}
-
 	public static List<Baseband> parseFromXml(Context context) {
 		LinkedList<Baseband> bs = new LinkedList<Baseband>();
 		XmlResourceParser xrp = context.getResources().getXml(R.xml.basebands);

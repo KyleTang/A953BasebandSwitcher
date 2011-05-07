@@ -33,44 +33,54 @@ public class Module {
     
     public static final String ID_SYSTEM = "[system]";
     public static final String ID_BACKUP = "[backup]";
-    public static final String ID_UNKNOWN = "unknown";
+    public static final String ID_UNKNOWN = "[unknown]";
+    public static final String VER_UNKNOWN = "(无法读取基带版本号)";
 	
     public static String getUnpackPath(){
     	if (_unpackPath==null)
-    		_unpackPath = G.getExternalStorageDirectory().getAbsolutePath()+"/files/";
+    		_unpackPath = G.getDataStorageDirectory().getAbsolutePath();
     	return _unpackPath;
     }
     
     public static String getIdPath(String id){
-    	return getUnpackPath()+id;
+    	if (Module.ID_SYSTEM.equalsIgnoreCase(id)){
+    		return Module.systemPath;
+    	}
+    	if (Module.ID_BACKUP.equalsIgnoreCase(id)){
+    		return Module.backupPath;
+    	}
+    	return getUnpackPath()+"/"+id;
     }
     
     public static boolean backup(){
-    	copy(systemPath,backupPath,true);
+    	copy(systemPath,backupPath,true,false);
     	return Module.areSameSysAndBackup();
     }
     
     public static boolean restore(){
-    	copy(backupPath,systemPath,true);
+    	copy(backupPath,systemPath,true,true);
     	return Module.areSameSysAndBackup();
     }
     
     public static boolean switchTo(String id){
-    	copy(Module.getIdPath(id),systemPath,true);
+    	copy(Module.getIdPath(id),systemPath,true,true);
     	return Module.areSameBasebandFull(Module.getIdPath(id), systemPath);
     }
 
-    public static void copy(String fromPath, String toPath, boolean deleteFirst){
+    public static void copy(String fromPath, String toPath, boolean deleteFirst, boolean setPerm){
     	//copy files to destination path 
     	StringBuilder sb = new StringBuilder();
     	sb.append(Module.sysrw+" ; ");
     	if (deleteFirst){
-    		sb.append("rm -f "+toPath+"/* ; ");
+    		sb.append("rm "+toPath+"/* ; ");
     	}
     	sb.append("cp "+fromPath+"/* "+toPath+" ; ");
-    	sb.append("chown root.root "+toPath+" ; ");
-    	sb.append("chmod 644 "+toPath+" ; ");
+    	if (setPerm){
+	    	sb.append("chown root.root "+toPath+"/* ; ");
+	    	sb.append("chmod 644 "+toPath+"/* ; ");
+    	}
     	sb.append(Module.sysro+" ; ");
+    	G.execRootCmdSilent(sb.toString());
     }
     
     /**
@@ -80,25 +90,20 @@ public class Module {
      */
     public static String getVersionById(String id){
     	String path = null;
-    	if (Module.ID_SYSTEM.equalsIgnoreCase(id)){
-    		path = Module.systemPath;
-    	}else if (Module.ID_BACKUP.equalsIgnoreCase(id)){
-    		path = Module.backupPath;
-    	}else {
-    		path = Module.getIdPath(id);
-    	}
+    	path = Module.getIdPath(id);
     	return getVersion(path);
     }
     
     public static String getVersion(String path){
-    	//TODO gsm file name
     	File f = new File(path,"");
     	if (!f.exists()){
     		return null;
     	}
-    	//TODO getVersion
-    	
-    	return Module.ID_UNKNOWN;
+    	String cmd = "busybox grep -o U[A-Za-z0-9\\.]*[A-Za-z0-9\\.] " + path + "/File_GSM"+
+			" > /tmp/bpsw_version ; " ;
+		G.execRootCmdSilent(cmd);
+		String verstr = G.readLine("/tmp/bpsw_version");
+		return verstr==null||verstr.trim().length()==0?Module.VER_UNKNOWN:verstr;
     }
     
     public static void getAllBasebandVersion(){
@@ -186,20 +191,15 @@ public class Module {
 		NotSame 
 	}
 	
-	public static String loadBpswVersionStr(boolean currentTrueOrBackupFalse){
-		String cmd = "busybox grep -o U[A-Za-z0-9\\.]*[A-Za-z0-9\\.] " +
-				(currentTrueOrBackupFalse?Module.systemPath+"/File_GSM " :Module.backupPath+"/File_GSM " )+
-				"> /tmp/bpsw_version" ;
-		G.execRootCmdSilent(cmd);
-		String verstr = G.readLine("/tmp/bpsw_version");
-		return verstr==null||verstr.trim().length()==0?"(无法读取基带版本号)":verstr;
-	}
+//	public static String loadBpswVersionStr(boolean currentTrueOrBackupFalse){
+//		
+//	}
 	
 	/**
 	 * 解压assets一级目录files里的文件，扩展名为.zip.mp3的按zip文件处理
 	 */
 	public static void unpack(){
-		File file = G.getExternalStorageDirectory();
+		File file = G.getDataStorageDirectory();
 		if (!file.exists()) file.mkdirs();
 		try {
 			String[] files = G.getResources().getAssets().list("files");
@@ -226,7 +226,7 @@ public class Module {
 			AssetFileDescriptor afd = G.getResources().getAssets().openFd(dir+filename);
 			InputStream in = G.getResources().getAssets().open(dir+filename);
 			//FileOutputStream out = context.openFileOutput(filename, Context.MODE_WORLD_READABLE);
-			File file = new File(G.getExternalStorageDirectory().getAbsolutePath()+"/"+filename);
+			File file = new File(G.getDataStorageDirectory().getAbsolutePath()+"/"+filename);
 			FileOutputStream out = new FileOutputStream(file,false);
 			while((count = in.read(bs))>=0){
 				out.write(bs,0,count);
@@ -260,14 +260,9 @@ public class Module {
 	}
 	
 	public static BpswCompareResult areSameBaseband(String from,String path){
-		String dir = null;
-		if (!path.startsWith("/")){
-			dir = G.getExternalStorageDirectory()+"/"+path;
-		}else{
-			dir = path;
-		}
-		BpswCompareResult ret = areSame(from+"/File_Seem_Flex_Tables",dir+"/File_Seem_Flex_Tables");
-		return ret==BpswCompareResult.Same?areSame(from+"/File_GSM",dir+"/File_GSM"):ret;
+		L.debug("areSameBaseband: from="+from+" ,path="+path);
+		BpswCompareResult ret = areSame(from+"/File_GSM",path+"/File_GSM");
+		return ret==BpswCompareResult.Same?areSame(from+"/File_Seem_Flex_Tables",path+"/File_Seem_Flex_Tables"):ret;
 	}
 	
 	public static BpswCompareResult areSame(String from, String to){
@@ -337,6 +332,7 @@ public class Module {
 				return bb;
 			}
 		}
+		L.debug("checkBaseband: no found, bpswPath="+bpswPath);
 		return null;
 	}
     ///////////////////////////////////////////////////////////////////////////////////
@@ -364,9 +360,9 @@ public class Module {
 	 * @return
 	 */
 	public static boolean isUnpack(){
-		if ( !G.getExternalStorageDirectory().exists() )
+		if ( !G.getDataStorageDirectory().exists() )
 			return false;
-		if ( G.getExternalStorageDirectory().listFiles().length>0){
+		if ( G.getDataStorageDirectory().listFiles().length>0){
 			return true;
 		}else{
 			return false;

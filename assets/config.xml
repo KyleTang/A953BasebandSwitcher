@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<basebands bakpath="/mnt/sdcard/.bpsw_backup">
-	<baseband id="a953_uk" name="A953欧版基带" />
-	<baseband id="me722_zhcn" name="ME722国行基带" />
-</basebands>

@@ -251,10 +251,10 @@ public final class G {
 		return new File(G.getVersionFlagDirectory(),"versionCode."+G.getVersionCode(false));
 	}
 	
-	public static File getExternalStorageDirectory() {
-		File localFile = Environment.getExternalStorageDirectory();
-		return new File(localFile, "/Android/data/"+G.getPackageName()+"/files");
-	}
+//	public static File getExternalStorageDirectory() {
+//		File localFile = Environment.getExternalStorageDirectory();
+//		return new File(localFile, "/Android/data/"+G.getPackageName()+"/files");
+//	}
 	
 	public static File getDataStorageDirectory() {
 		return new File("/data/data/"+G.getPackageName()+"/files");
