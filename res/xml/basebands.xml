@@ -4,6 +4,8 @@
 	name="欧版(2.2)" text="英国/法国/德国/奥地利 /瑞士/澳大利亚Optus" wcdma="900/2100" />
 <baseband id="a953_de" 
 	name="欧版(2.2.2)" text="英国/德国" wcdma="900/2100" />
+<baseband id="a953_uk"
+	name="港版(2.2)" text="香港" wcdma="900/2100" />
 <baseband id="me722_zhcn_0.24" 
 	name="国行0.24" text="" wcdma="850/1900/2100" />
 <baseband id="me722_zhcn_1.10" 
@@ -16,5 +18,13 @@
 	name="澳大利亚" text="Vodafone基带" wcdma="900/2100" />
 <baseband id="a953_agt" 
 	name="阿根廷(2.2.2)" text="" wcdma="900/2100" />
+<baseband id="a853_newhk"
+	name="A853新港版" text="仅替换A853新港版的5个核心文件" wcdma="900/2100" />
+<baseband id="defy_hktw2.51.0"
+	name="Defy港台2.51.0" text="" wcdma="900/2100" />
+<baseband id="defy_hktw2.59.0"
+	name="Defy港台2.59.0" text="" wcdma="900/2100" />
+<baseband id="defy_hktw3.4.x"
+	name="Defy港台3.4.x" text="" wcdma="900/2100" />
 
 </basebands>

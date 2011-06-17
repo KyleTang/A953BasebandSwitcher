@@ -53,6 +53,8 @@ public class Module {
     }
     
     public static boolean backup(){
+    	File f = new File(backupPath);
+    	f.mkdirs();
     	copy(systemPath,backupPath,true,false);
     	return Module.areSameSysAndBackup();
     }
