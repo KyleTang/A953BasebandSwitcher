@@ -263,8 +263,10 @@ public class Module {
 	
 	public static BpswCompareResult areSameBaseband(String from,String path){
 		L.debug("areSameBaseband: from="+from+" ,path="+path);
-		BpswCompareResult ret = areSame(from+"/File_GSM",path+"/File_GSM");
-		return ret==BpswCompareResult.Same?areSame(from+"/File_Seem_Flex_Tables",path+"/File_Seem_Flex_Tables"):ret;
+		BpswCompareResult ret1 = areSame(from+"/File_GSM",path+"/File_GSM");
+		BpswCompareResult ret2 = areSame(from+"/File_Seem_Flex_Tables",path+"/File_Seem_Flex_Tables");
+		return (ret1==BpswCompareResult.Same && ret2==BpswCompareResult.Same)?
+				BpswCompareResult.Same:BpswCompareResult.NotSame;
 	}
 	
 	public static BpswCompareResult areSame(String from, String to){
