@@ -263,10 +263,23 @@ public class Module {
 	
 	public static BpswCompareResult areSameBaseband(String from,String path){
 		L.debug("areSameBaseband: from="+from+" ,path="+path);
-		BpswCompareResult ret1 = areSame(from+"/File_GSM",path+"/File_GSM");
-		BpswCompareResult ret2 = areSame(from+"/File_Seem_Flex_Tables",path+"/File_Seem_Flex_Tables");
-		return (ret1==BpswCompareResult.Same && ret2==BpswCompareResult.Same)?
-				BpswCompareResult.Same:BpswCompareResult.NotSame;
+		BpswCompareResult ret = areSame(from+"/File_GSM",path+"/File_GSM");
+		String[] fromArray = new File(from).list();
+		String[] pathArray = new File(path).list();
+		if (fromArray!=null && pathArray!=null){
+			if (fromArray.length!=pathArray.length){
+				return BpswCompareResult.NotSame; 
+			}
+		}
+		if (ret==BpswCompareResult.Same){
+			if (areSameBasebandFull(from,path)){
+				return BpswCompareResult.Same;
+			}else{
+				return BpswCompareResult.NotSame;
+			}
+		}else{
+			return BpswCompareResult.NotSame;
+		}
 	}
 	
 	public static BpswCompareResult areSame(String from, String to){
@@ -286,8 +299,8 @@ public class Module {
 			byte[] lineTo =  new byte[10240];
 			int lineToCount = 0;
 			do{
-				lineFromCount = fisFrom.read(lineFrom,0,1024);
-				lineToCount = fisTo.read(lineTo,0,1024);
+				lineFromCount = fisFrom.read(lineFrom,0,10240);
+				lineToCount = fisTo.read(lineTo,0,10240);
 				if (lineFromCount!=lineToCount)
 					throw new IOException("");
 				for(int i=0;i<lineFromCount;i++){
