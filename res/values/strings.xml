@@ -1,5 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">里程碑2基带切换器</string>
+    <string name="app_name">Milestone 2 Baseband</string>
+    <string name="text_about">Name: {0}\nVersion: {1}\nAuthor: {2} \ngfan.com ID：{3}</string>
+    <string name="text_unknown">(unknown)</string>
+    <string name="text_noBackup">(no backup)</string>
+	<string name="text_ver_unknown">(unknown version)</string>
+	<string name="msg_needroot">need root!!</string>
+	
+	<string name="dialog_title_tip">Tip</string>
+	<string name="dialog_title_warning">Warning</string>
+	<string name="dialog_title_error">Error</string>
+	<string name="msg_backupOK">Backup ok !</string>
+	<string name="msg_backupFail">Backup fail !</string>
+	
+	<string name="btn_ok">OK</string>
+	<string name="btn_confirm">OK</string>
+	<string name="btn_cancel">Cancel</string>
+	<string name="btn_no">No</string>
+	<string name="btn_yes">Yes</string>
+	
+	<string name="menu_backup">Backup</string>
+	<string name="menu_restore">Restore</string>
+	<string name="menu_about">About</string>
+	
+	<string name="ver_ms2">(Ms2)</string>
+	<string name="ver_defy">(defy)</string>
+	<string name="ver_defy_china">China</string>
+	
+	<string name="text_switchto">Switch to </string>
+	<string name="text_restore">Restore as </string>
+	<string name="msg_rebootNow">Switch finished , need reboot, reboot now ?</string>
+	<string name="msg_doyouneed">do you need {0} {1} ?</string>
+	<string name="text_backup">(backup baseband)</string>
 
+	<string name="text_tip_currentSystem">Current: </string>
+	<string name="text_tip_currentBackup">Backup: </string>
+	<string name="text_tip_version">Version: </string>
 </resources>

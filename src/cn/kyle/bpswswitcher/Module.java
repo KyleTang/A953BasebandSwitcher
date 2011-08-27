@@ -10,10 +10,12 @@ import java.util.Iterator;
 import java.util.List;
 import cn.kyle.util.G;
 import cn.kyle.util.L;
+import cn.kyle.util.MultiLang;
 import cn.kyle.util.Zip;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.content.res.Resources;
 
 public class Module {
 	public static enum BasebandFile{
@@ -34,7 +36,12 @@ public class Module {
     public static final String ID_SYSTEM = "[system]";
     public static final String ID_BACKUP = "[backup]";
     public static final String ID_UNKNOWN = "[unknown]";
-    public static final String VER_UNKNOWN = "(无法读取基带版本号)";
+    //public static String VER_UNKNOWN = "";
+    private static MultiLang ml = null;
+    
+    public static void setMultiLang(MultiLang _ml){
+    	ml = _ml;
+    }
 	
     public static String getUnpackPath(){
     	if (_unpackPath==null)
@@ -105,7 +112,7 @@ public class Module {
 			" > /tmp/bpsw_version ; " ;
 		G.execRootCmdSilent(cmd);
 		String verstr = G.readLine("/tmp/bpsw_version");
-		return verstr==null||verstr.trim().length()==0?Module.VER_UNKNOWN:verstr;
+		return verstr==null||verstr.trim().length()==0?ml.t(R.string.text_ver_unknown, null):verstr;
     }
     
     public static void getAllBasebandVersion(){
@@ -135,7 +142,7 @@ public class Module {
     
     public static String resolvingVersion(String verstr){
     	if (verstr.contains("MILESTONE2")){
-    		return "(里程碑2专用) "+verstr.substring(verstr.indexOf("MILESTONE2")+"MILESTONE2".length());
+    		return ml.t(R.string.ver_ms2, null)+" "+verstr.substring(verstr.indexOf("MILESTONE2")+"MILESTONE2".length());
     	}
 //		File_GSMAGA:			US1 MILESTONE2 PERAR B125 LA 016.0R
 //		File_GSMAO:				UCA JRDNEMARA B1B8 0AA 035.0R
@@ -158,20 +165,20 @@ public class Module {
 //		File_GSMUST3.4.2-107-9:	USA JRDNTMO B1B4B5 DE1  039.0R
 //		File_GSMUST6.19.0:		USA JRDNTMO B1B4B5 DE1  028.0R
     	if (verstr.contains("JRDNEMARA")){
-    		return "(defy专用) JRDNEMARA "+verstr.substring(verstr.indexOf("JRDNEMARA")+"JRDNEMARA".length());
+    		return ml.t(R.string.ver_defy, null)+" JRDNEMARA "+verstr.substring(verstr.indexOf("JRDNEMARA")+"JRDNEMARA".length());
     	}
     	if (verstr.contains("JORD")){
-    		return "(defy专用) JORD "+verstr.substring(verstr.indexOf("JORD")+"JORD".length());
+    		return ml.t(R.string.ver_defy, null)+" JORD "+verstr.substring(verstr.indexOf("JORD")+"JORD".length());
     	}
     	if (verstr.contains("JRDNPRC")){
-    		return "(defy专用) 国行  "+verstr.substring(verstr.indexOf("JRDNPRC")+"JRDNPRC".length());
+    		return ml.t(R.string.ver_defy, null)+" "+ml.t(R.string.ver_defy_china, null)+" "+verstr.substring(verstr.indexOf("JRDNPRC")+"JRDNPRC".length());
     	}
     	if (verstr.contains("JRDNTMO")){
-    		return "(defy专用) JRDNTMO "+verstr.substring(verstr.indexOf("JRDNTMO")+"JRDNTMO".length());
+    		return ml.t(R.string.ver_defy, null)+" JRDNTMO "+verstr.substring(verstr.indexOf("JRDNTMO")+"JRDNTMO".length());
     	}
     	
     	if (verstr.contains("JRDN")){
-    		return "(defy专用) JRDN "+verstr.substring(verstr.indexOf("JRDN")+"JRDN".length());
+    		return ml.t(R.string.ver_defy, null)+" JRDN "+verstr.substring(verstr.indexOf("JRDN")+"JRDN".length());
     	}
     	return verstr;
     }

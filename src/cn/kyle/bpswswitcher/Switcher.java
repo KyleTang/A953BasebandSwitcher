@@ -2,10 +2,12 @@ package cn.kyle.bpswswitcher;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Locale;
 
 import cn.kyle.bpswswitcher.Module.BpswCompareResult;
 import cn.kyle.util.G;
 import cn.kyle.util.L;
+import cn.kyle.util.MultiLang;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -27,12 +29,14 @@ public class Switcher extends Activity {
 	private TextView tvTip = null;
 	private Toast myToast = null;
 	private LinearLayout llBasebands = null; 
-	
+	private MultiLang ml = null;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
+
+        ml = new MultiLang(this);
+        Module.setMultiLang(ml);
         G.setResourcesAndContext(this);
        // G.execRootCmdSilent(Module.sysrw);
         tvTip = (TextView)findViewById(R.id.tvTip); 
@@ -68,7 +72,7 @@ public class Switcher extends Activity {
 		public void onClick(View v) {
 			//switch baseband
 			final Baseband bb = (Baseband)btn.getTag();
-			doSwitch("切换为 ", bb , new DialogInterface.OnClickListener(){
+			doSwitch(ml.t(R.string.text_switchto, null), bb , new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int which) {
 					Module.switchTo(bb.id);
 					refreshTip();
@@ -88,34 +92,40 @@ public class Switcher extends Activity {
     public void doSwitch(String action, Baseband t, final DialogInterface.OnClickListener onClickAction ){
     	if (!G.haveRoot()){
     		AlertDialog a = new AlertDialog.Builder(Switcher.this)
-    		.setTitle("警告").setMessage("手机需要先破解ROOT权限！")
-    		.setPositiveButton("确定", new DialogInterface.OnClickListener(){
+    		.setTitle(R.string.dialog_title_warning).setMessage(R.string.msg_needroot)
+    		.setPositiveButton(R.string.btn_confirm, new DialogInterface.OnClickListener(){
     			public void onClick(DialogInterface dialog, int which) {
     			}
     		}).create();
     		a.show();
     	}else{
 	    	AlertDialog a = new AlertDialog.Builder(Switcher.this)
-			.setTitle("提示").setMessage("是否要"+action+(t==null?"备份基带":t.name))
-			.setPositiveButton("确定", new DialogInterface.OnClickListener(){
+			.setTitle(R.string.dialog_title_tip).setMessage(
+						ml.t(R.string.msg_doyouneed, 
+							new String[]{
+								action,
+								(t==null?ml.t(R.string.text_backup, null):t.name)}
+						)
+				)
+			.setPositiveButton(R.string.btn_confirm, new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int which) {
 					onClickAction.onClick(dialog, which);
 					refreshTip();
 					AlertDialog aa = new AlertDialog.Builder(Switcher.this)
-		    		.setTitle("提示").setMessage("切换成功，重启后生效，是否立即重启？")
-		    		.setPositiveButton("是", new DialogInterface.OnClickListener(){
+		    		.setTitle(R.string.dialog_title_tip).setMessage(R.string.msg_rebootNow)
+		    		.setPositiveButton(R.string.btn_yes, new DialogInterface.OnClickListener(){
 		    			public void onClick(DialogInterface dialog, int which) {
 		    				G.execRootCmdSilent("reboot");
 		    			}
 		    		})
-		    		.setNeutralButton("否", new DialogInterface.OnClickListener(){
+		    		.setNeutralButton(R.string.btn_no, new DialogInterface.OnClickListener(){
 		    			public void onClick(DialogInterface dialog, int which) {
 		    			}
 		    		}).create();
 		    		aa.show();
 				}
 			})
-			.setNegativeButton("取消", new DialogInterface.OnClickListener(){
+			.setNegativeButton(R.string.btn_cancel, new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int which) {
 					
 				}
@@ -132,10 +142,10 @@ public class Switcher extends Activity {
     	Baseband bc = Module.checkCurrentBaseband();
     	Baseband bb = Module.checkBackupBaseband();
     	tvTip.setText(
-    			"当前系统的基带为："+(bc==null?"(未知基带)":bc.name)+"\n"+
-    			"版本号："+current+"\n\n"+
-    			"当前备份的基带为："+(Module.hasBackup()? (bb==null?"(未知基带)":bb.name):"(尚未备份)")+"\n"+
-    			"版本号："+backup);
+    			ml.t(R.string.text_tip_currentSystem, null)+(bc==null?ml.t(R.string.text_unknown, null):bc.name)+"\n"+
+    			ml.t(R.string.text_tip_version, null)+current+"\n\n"+
+    			ml.t(R.string.text_tip_currentBackup, null)+(Module.hasBackup()? (bb==null?ml.t(R.string.text_unknown, null):bb.name):ml.t(R.string.text_noBackup, null))+"\n"+
+    			ml.t(R.string.text_tip_version, null)+backup);
     }
     
 	public final int MENU_BACKUP = 0;
@@ -150,9 +160,9 @@ public class Switcher extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		int groupId = 0;
 		int menuItemOrder = Menu.NONE;
-		menu.add(groupId, MENU_BACKUP, menuItemOrder,"备份");
-		menu.add(groupId, MENU_RESTORE, menuItemOrder,"还原");
-		menu.add(groupId, MENU_ABOUT, menuItemOrder,"关于");
+		menu.add(groupId, MENU_BACKUP, menuItemOrder,R.string.menu_backup);
+		menu.add(groupId, MENU_RESTORE, menuItemOrder,R.string.menu_restore);
+		menu.add(groupId, MENU_ABOUT, menuItemOrder,R.string.menu_about);
 		
 		
 		miAbout = menu.findItem(MENU_ABOUT);
@@ -161,10 +171,7 @@ public class Switcher extends Activity {
 		
 		miAbout.setOnMenuItemClickListener(new OnMenuItemClickListener(){
 			public boolean onMenuItemClick(MenuItem item) {
-				myToast("名称：里程碑2基带切换器\n" +
-						"版本："+G.versionName+"\n"+
-						"作者：Kyle Tang \n" +
-						"机锋ID：sw_acer");
+				myToast(ml.t(R.string.text_about,new String[]{ml.t(R.string.app_name,null),G.versionName,"Kyle Tang","sw_acer"}));
 				return false;
 			}
 		});
@@ -173,8 +180,8 @@ public class Switcher extends Activity {
 			public boolean onMenuItemClick(MenuItem item) {
 				if (Module.backup()){
 					AlertDialog a = new AlertDialog.Builder(Switcher.this)
-					.setTitle("提示").setMessage("备份成功！")
-					.setPositiveButton("确定", new DialogInterface.OnClickListener(){
+					.setTitle(R.string.dialog_title_tip).setMessage(R.string.msg_backupOK)
+					.setPositiveButton(R.string.btn_confirm, new DialogInterface.OnClickListener(){
 						public void onClick(DialogInterface dialog, int which) {
 							
 						}
@@ -182,8 +189,8 @@ public class Switcher extends Activity {
 					a.show();
 				}else{
 					AlertDialog a = new AlertDialog.Builder(Switcher.this)
-					.setTitle("警告").setMessage("备份失败！")
-					.setPositiveButton("确定", new DialogInterface.OnClickListener(){
+					.setTitle(R.string.dialog_title_warning).setMessage(R.string.msg_backupFail)
+					.setPositiveButton(R.string.btn_confirm, new DialogInterface.OnClickListener(){
 						public void onClick(DialogInterface dialog, int which) {
 							
 						}
@@ -197,7 +204,7 @@ public class Switcher extends Activity {
 		
 		miRestore.setOnMenuItemClickListener(new OnMenuItemClickListener(){
 			public boolean onMenuItemClick(MenuItem item) {
-				doSwitch("还原为 ", Module.checkBackupBaseband(), new DialogInterface.OnClickListener(){
+				doSwitch(ml.t(R.string.text_restore, null), Module.checkBackupBaseband(), new DialogInterface.OnClickListener(){
 					public void onClick(DialogInterface dialog, int which) {
 						Module.restore();
 						refreshTip();

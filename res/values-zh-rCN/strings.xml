@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">里程碑2基带切换器</string>
+    <string name="text_about">名称：{0}\n版本：{1}\n作者：{2} \n机锋ID：{3}</string>
+    <string name="text_unknown">(未知基带)</string>
+    <string name="text_noBackup">(尚未备份)</string>
+	<string name="text_ver_unknown">(无法读取基带版本号)</string>
+	<string name="msg_needroot">手机需要先破解ROOT权限！</string>
+	
+	<string name="dialog_title_tip">提示</string>
+	<string name="dialog_title_warning">警告</string>
+	<string name="dialog_title_error">错误</string>
+	<string name="msg_backupOK">备份成功！</string>
+	<string name="msg_backupFail">备份失败！</string>
+	
+	<string name="btn_ok">OK</string>
+	<string name="btn_confirm">确定</string>
+	<string name="btn_cancel">取消</string>
+	<string name="btn_no">否</string>
+	<string name="btn_yes">是</string>
+	
+	<string name="menu_backup">备份</string>
+	<string name="menu_restore">还原</string>
+	<string name="menu_about">关于</string>
+	
+	<string name="ver_ms2">(里程碑2专用)</string>
+	<string name="ver_defy">(defy专用)</string>
+	<string name="ver_defy_china">国行</string>
+	
+	<string name="text_switchto">切换为 </string>
+	<string name="text_restore">还原为 </string>
+	<string name="msg_rebootNow">切换成功，重启后生效，是否立即重启？</string>
+	<string name="msg_doyouneed">是否要 {0} {1} ?</string>
+	<string name="text_backup">备份基带</string>
+
+	<string name="text_tip_currentSystem">当前系统的基带为：</string>
+	<string name="text_tip_currentBackup">当前备份的基带为：</string>
+	<string name="text_tip_version">版本号：</string>
+</resources>

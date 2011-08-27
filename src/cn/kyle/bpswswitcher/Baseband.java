@@ -4,12 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-
 import cn.kyle.util.Tool;
-
 import android.content.Context;
 import android.content.res.XmlResourceParser;
 
@@ -25,7 +24,12 @@ public class Baseband {
 	
 	public static List<Baseband> parseFromXml(Context context) {
 		LinkedList<Baseband> bs = new LinkedList<Baseband>();
-		XmlResourceParser xrp = context.getResources().getXml(R.xml.basebands);
+		int resid = R.xml.basebands;//设置主界面的菜单语言
+		if (context.getResources().getConfiguration().locale.getLanguage().equals(Locale.CHINESE.getLanguage())){
+			// 所的的值将会自动保存到SharePreferences
+			resid= R.xml.basebands_chs;
+		}
+		XmlResourceParser xrp = context.getResources().getXml(resid);
 		try {
 			xrp.next();
 			int eventType = xrp.getEventType();
